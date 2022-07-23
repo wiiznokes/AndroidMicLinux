@@ -3,7 +3,7 @@
 using namespace std;
 
 
-libusb_device* findAndroidDevice(libusb_context *context){
+bool findAndroidDevice(libusb_context *context, libusb_device *device){
 	libusb_device **devices;
 	ssize_t listSize;
 
@@ -12,7 +12,7 @@ libusb_device* findAndroidDevice(libusb_context *context){
 	if(listSize < 0){
 		cout << "Error in getting device list" << endl;
 		libusb_free_device_list(devices, 1);
-		return NULL;
+		return false;
 	}
 	cout << listSize << "devices found" << endl;
 
@@ -31,6 +31,7 @@ libusb_device* findAndroidDevice(libusb_context *context){
 		if(device_descriptor.idVendor == VID_GOOGLE){
 			cout <<"Android device found" << endl;
 			found = true;
+            device = devices[i];
             break;
 		}
         i++;

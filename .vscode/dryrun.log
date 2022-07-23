@@ -1,6 +1,6 @@
 make --dry-run --always-make --keep-going --print-directory
-make: Entering directory '/home/lenaic/Documents/dev/AndroidMicLinuxC++'
-make: Leaving directory '/home/lenaic/Documents/dev/AndroidMicLinuxC++'
+make: Entering directory '/home/lenaic/Documents/GitHub/AndroidMicLinuxCPP'
+make: Leaving directory '/home/lenaic/Documents/GitHub/AndroidMicLinuxCPP'
  
 make: *** No targets specified and no makefile found.  Stop.
 
