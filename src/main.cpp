@@ -15,16 +15,15 @@ void initUsb(libusb_context *context) {
 // g++ -o prog ./src/*cpp -lusb-1.0 && ./prog
 int main() {
 
-	libusb_context *context;
+	libusb_context *context = NULL;
 	libusb_device *device;
 	initUsb(context);
-
-	device = findAndroidDevice(context);
-	if(device == NULL) {
+	
+	if(!findAndroidDevice(context, device)) {
 		cout << "no android device found" << endl;
 		exit(1);
 	}
-
+	
 	printDevice(device);
-
+	
 }

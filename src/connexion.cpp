@@ -3,7 +3,7 @@
 using namespace std;
 
 
-libusb_device* findAndroidDevice(libusb_context *context){
+bool findAndroidDevice(libusb_context *context, libusb_device *device){
 	libusb_device **devices;
 	ssize_t listSize;
 
@@ -12,9 +12,9 @@ libusb_device* findAndroidDevice(libusb_context *context){
 	if(listSize < 0){
 		cout << "Error in getting device list" << endl;
 		libusb_free_device_list(devices, 1);
-		return NULL;
+		return false;
 	}
-	cout << listSize << "devices found" << endl;
+	cout << listSize << " devices found" << endl;
 
 
 	struct libusb_device_descriptor device_descriptor;
@@ -31,6 +31,7 @@ libusb_device* findAndroidDevice(libusb_context *context){
 		if(device_descriptor.idVendor == VID_GOOGLE){
 			cout <<"Android device found" << endl;
 			found = true;
+            device = devices[i];
             break;
 		}
         i++;
@@ -42,7 +43,7 @@ libusb_device* findAndroidDevice(libusb_context *context){
 
 void printDevice(libusb_device *device){
 
-    struct libusb_device_descriptor device_descriptor;
+    struct libusb_device_descriptor *device_descriptor;
     struct libusb_config_descriptor *config_descriptor;
     const struct libusb_interface *interface;
     const struct libusb_interface_descriptor *interface_descriptor;
@@ -51,16 +52,16 @@ void printDevice(libusb_device *device){
     int ret;
     int i, j, k;
 
-    ret = libusb_get_device_descriptor(device, &device_descriptor);
+    ret = libusb_get_device_descriptor(device, device_descriptor);
 
     if(ret < 0){
         cout << "Error in getting device descriptor" << endl;
         return;
     }
 
-    cout << "Number of pos configs is %d\n" << device_descriptor.bNumConfigurations << endl;
-    cout << "Device class: %d\n" << device_descriptor.idVendor << endl;
-    cout << "Product ID: %d\n" << device_descriptor.idProduct << endl;
+    cout << "Number of pos configs is %d\n" << device_descriptor->bNumConfigurations << endl;
+    cout << "Device class: %d\n" << device_descriptor->idVendor << endl;
+    cout << "Product ID: %d\n" << device_descriptor->idProduct << endl;
 
     libusb_get_config_descriptor(device, 0, &config_descriptor);
     cout << "Interface: %d\n" << config_descriptor->bNumInterfaces << endl;
