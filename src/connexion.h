@@ -2,6 +2,7 @@
 #define CONNEXION_H_
 
 #include <iostream>
+#include <cstring>
 #include <libusb-1.0/libusb.h>
 
 
@@ -24,5 +25,7 @@
 
 libusb_device* findAndroidDevice(libusb_context *context);
 void printDevice(libusb_device *device);
+bool isAndroidAcc(libusb_device *device);
+bool switchAndroidToAcc(libusb_device *device);
 
 #endif

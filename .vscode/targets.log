@@ -8,7 +8,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Sun Jul 24 03:01:49 2022
+# Make data base, printed on Sun Jul 24 17:22:35 2022
 
 # Variables
 
@@ -91,7 +91,7 @@ SNAP_REEXEC =
 # automatic
 @F = $(notdir $@)
 # environment
-VSCODE_PID = 30156
+VSCODE_PID = 4746
 # environment
 XDG_SESSION_TYPE = x11
 # automatic
@@ -99,7 +99,7 @@ XDG_SESSION_TYPE = x11
 # environment
 BAMF_DESKTOP_FILE_HINT = /var/lib/snapd/desktop/applications/code_code.desktop
 # environment
-SESSION_MANAGER = local/Ubuntu-Asus:@/tmp/.ICE-unix/1519,unix/Ubuntu-Asus:/tmp/.ICE-unix/1519
+SESSION_MANAGER = local/Ubuntu-Asus:@/tmp/.ICE-unix/1462,unix/Ubuntu-Asus:/tmp/.ICE-unix/1462
 # automatic
 *F = $(notdir $*)
 # environment
@@ -141,7 +141,7 @@ SNAP_USER_COMMON = /home/lenaic/snap/code/common
 # environment
 SNAP = /snap/code/102
 # environment
-INVOCATION_ID = 6b809af44a8946edad0bdc6df9d0c158
+INVOCATION_ID = db41451e8ab04449a44212f415f88661
 # environment
 SNAP_REVISION = 102
 # environment
@@ -173,7 +173,7 @@ SNAP_ARCH = amd64
 # makefile
 .DEFAULT_GOAL := 
 # environment
-SYSTEMD_EXEC_PID = 1564
+SYSTEMD_EXEC_PID = 1499
 # environment
 DISPLAY = :0
 # environment
@@ -189,9 +189,9 @@ SNAP_DATA = /var/snap/code/102
 # environment
 SNAP_CONTEXT = cBz6T4Tf4OLeB13AWULRZY7JOYLuNs9DoWaYRHhvZtzqi5736nG4
 # environment
-MANAGERPID = 1256
+MANAGERPID = 1244
 # environment
-GIO_LAUNCHED_DESKTOP_FILE_PID = 30102
+GIO_LAUNCHED_DESKTOP_FILE_PID = 4697
 # environment
 _ = /snap/code/102/usr/share/code/code
 # environment
@@ -201,7 +201,7 @@ GPG_AGENT_INFO = /run/user/1000/gnupg/S.gpg-agent:0:1
 # environment
 GDK_PIXBUF_MODULE_FILE = /home/lenaic/snap/code/common/.cache/gdk-pixbuf-loaders.cache
 # environment
-JOURNAL_STREAM = 8:39624
+JOURNAL_STREAM = 8:31714
 # environment
 XDG_SESSION_CLASS = user
 # environment
@@ -228,7 +228,6 @@ SNAP_VERSION = 3b889b09
 SUFFIXES := 
 # environment
 VSCODE_CLI = 1
- 
 # environment
 ELECTRON_NO_ATTACH_CONSOLE = 1
 # environment
@@ -280,6 +279,7 @@ all:
 #  Command line target.
 #  Implicit rule search has been done.
 #  File does not exist.
+ 
 #  File has not been updated.
 
 # Not a target:
@@ -310,6 +310,6 @@ GNUmakefile:
 # strcache performance: lookups = 19 / hit rate = 15%
 # hash-table stats:
 # Load=16/8192=0%, Rehash=0, Collisions=0/19=0%
-# Finished Make data base on Sun Jul 24 03:01:49 2022
+# Finished Make data base on Sun Jul 24 17:22:35 2022
 
  
