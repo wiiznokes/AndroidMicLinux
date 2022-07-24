@@ -28,4 +28,6 @@ int main() {
 	
 	printDevice(device);
 	
+	libusb_exit(context);
+    return 0;
 }
