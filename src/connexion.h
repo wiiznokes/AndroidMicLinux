@@ -22,7 +22,7 @@
 
 
 
-bool findAndroidDevice(libusb_context *context, libusb_device *device);
+libusb_device* findAndroidDevice(libusb_context *context);
 void printDevice(libusb_device *device);
 
 #endif

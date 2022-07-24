@@ -3,7 +3,7 @@
 using namespace std;
 
 
-bool findAndroidDevice(libusb_context *context, libusb_device *device){
+libusb_device* findAndroidDevice(libusb_context *context){
 	libusb_device **devices;
 	ssize_t listSize;
 
@@ -12,24 +12,24 @@ bool findAndroidDevice(libusb_context *context, libusb_device *device){
 	if(listSize < 0){
 		cout << "Error in getting device list" << endl;
 		libusb_free_device_list(devices, 1);
-		return false;
+		return NULL;
 	}
 	cout << listSize << " devices found" << endl;
 
-
-	struct libusb_device_descriptor device_descriptor;
+    libusb_device *device = NULL;
+	struct libusb_device_descriptor *device_descriptor;
 	int ret;
 	int i = 0;
 	bool found = false;
 	while (i < listSize && !found){
-		ret = libusb_get_device_descriptor(devices[i], &device_descriptor);
+		ret = libusb_get_device_descriptor(devices[i], device_descriptor);
 		if(ret < 0){
 			cout << "Error in getting device descriptor" << endl;
 			break;
 		}
 
-		if(device_descriptor.idVendor == VID_GOOGLE){
-			cout <<"Android device found" << endl;
+		if(device_descriptor->idVendor == VID_GOOGLE){
+			cout <<"Android device found" << "\n" << endl;
 			found = true;
             device = devices[i];
             break;
@@ -38,7 +38,7 @@ bool findAndroidDevice(libusb_context *context, libusb_device *device){
 	}
 
 	libusb_free_device_list(devices, 1);
-	return found;
+	return device;
 }
 
 void printDevice(libusb_device *device){
@@ -59,32 +59,27 @@ void printDevice(libusb_device *device){
         return;
     }
 
-    cout << "Number of pos configs is %d\n" << device_descriptor->bNumConfigurations << endl;
-    cout << "Device class: %d\n" << device_descriptor->idVendor << endl;
-    cout << "Product ID: %d\n" << device_descriptor->idProduct << endl;
+    cout << "Number of configs: " << device_descriptor->bNumConfigurations << endl;
+    cout << "IdVendor: " << device_descriptor->idVendor << endl;
+    cout << "IdProduct: " << device_descriptor->idProduct << endl;
 
     libusb_get_config_descriptor(device, 0, &config_descriptor);
-    cout << "Interface: %d\n" << config_descriptor->bNumInterfaces << endl;
+    cout << "Number of interface: " << config_descriptor->bNumInterfaces << endl;
 
-    for(i = 0; i < config_descriptor->bNumInterfaces; i++)
-    {
+    for(i = 0; i < config_descriptor->bNumInterfaces; i++){
         interface = &config_descriptor->interface[i];
-        cout << " number of alt settings: %d\n" << interface->num_altsetting << endl;
+        cout << " Number of alt settings: " << interface->num_altsetting << endl;
 
-        for(j = 0; j < interface->num_altsetting; j++)
-        {
+        for(j = 0; j < interface->num_altsetting; j++){
             interface_descriptor = &interface->altsetting[j];
-            cout << "  Interface number: %d, " << interface_descriptor->bInterfaceNumber << endl;
-            cout << "  Num of endpoints: %d\n" << interface_descriptor->bNumEndpoints << endl;
+            cout << "  Interface number: " << interface_descriptor->bInterfaceNumber << endl;
+            cout << "  Number of endpoints: " << interface_descriptor->bNumEndpoints << endl;
 
-
-            for(k = 0; k < interface_descriptor->bNumEndpoints; k++)
-            {
+            for(k = 0; k < interface_descriptor->bNumEndpoints; k++){
                 endpoint_descriptor = &interface_descriptor->endpoint[k];
-                cout << "   Desc type: %d" << endpoint_descriptor->bDescriptorType << endl;
-                cout << "   EndPoint adress: %d\n" << endpoint_descriptor->bEndpointAddress << endl;
+                cout << "   Desc type: " << endpoint_descriptor->bDescriptorType << endl;
+                cout << "   EndPoint adress: " << endpoint_descriptor->bEndpointAddress << endl;
             }
-
         }
     }
 

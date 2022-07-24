@@ -19,7 +19,9 @@ int main() {
 	libusb_device *device;
 	initUsb(context);
 	
-	if(!findAndroidDevice(context, device)) {
+	device = findAndroidDevice(context);
+
+	if(device == NULL) {
 		cout << "no android device found" << endl;
 		exit(1);
 	}
