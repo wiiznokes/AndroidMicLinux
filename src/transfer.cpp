@@ -1,33 +1,38 @@
 #include "transfer.h"
 
-struct libusb_device_handle *handle;
-unsigned char endpoint;
 
-void init(struct libusb_device_handle *handle_, unsigned char endpoint_){
-	handle = handle_;
-	endpoint = endpoint_;
-};
+namespace transfer {
+	struct libusb_device_handle *handle;
+	unsigned char endpoint;
 
-bool read(unsigned char *data, int length) {
+	void init(struct libusb_device_handle *handle_, unsigned char endpoint_){
+		handle = handle_;
+		endpoint = endpoint_;
+	};
 
-	int ret;
+	bool read(unsigned char *data, int length) {
 
-    ret = libusb_bulk_transfer(handle,
-							endpoint,
-							data,
-							length,
-							NULL,
-							3000);
+		int ret;
 
-	if (ret < 0) {
-		std::cout << "error in libusb_bulk_transfer(): " << ret << std::endl;
-		finish();
-		return false;
+		ret = libusb_bulk_transfer(handle,
+								endpoint,
+								data,
+								length,
+								NULL,
+								3000);
+
+		if (ret < 0) {
+			std::cout << "error in libusb_bulk_transfer(): " << ret << std::endl;
+			finish();
+			return false;
+		}
+		return true;						
 	}
-	return true;						
+
+
+	void finish() {
+
+	}
 }
 
 
-void finish() {
-
-}
