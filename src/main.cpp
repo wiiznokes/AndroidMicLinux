@@ -41,7 +41,7 @@ int main() {
 		cout << "device already in accessory mode" << endl;
 
 	
-
+	
 	
 	libusb_exit(context);
     return 0;

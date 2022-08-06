@@ -6,9 +6,11 @@
 
 #define BUFSIZE 2560
 
-
-void init(struct libusb_device_handle *handle_, unsigned char endpoint_);
+namespace transfer 
+{
+bool init(libusb_device *device);
 bool read(unsigned char *data, int length);
 void finish();
+}
 
 #endif

@@ -8,9 +8,11 @@
 
 #define BUFSIZE 2560
 
-
-bool init();
-bool write(const void *data, size_t bytes);
-void finish();
+namespace audioManager 
+{
+    bool init();
+    bool write(const void *data, size_t bytes);
+    void finish();
+}
 
 #endif

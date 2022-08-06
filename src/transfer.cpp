@@ -1,14 +1,31 @@
 #include "transfer.h"
 
 
-namespace transfer {
+namespace transfer 
+{
 	struct libusb_device_handle *handle;
 	unsigned char endpoint;
 
-	void init(struct libusb_device_handle *handle_, unsigned char endpoint_){
-		handle = handle_;
-		endpoint = endpoint_;
+	bool init(libusb_device *device){
+		int ret;
+
+		ret = libusb_open(device, &handle);
+    	if(ret < 0){
+			std::cout << "Failed to connect to device: " << ret << std::endl;
+			return false;
+		}
+
+		if(!findEndpoint(device)) {
+			std::cout << "Failed to find endpoint" << std::endl;
+			return false;
+		}
+
+		return true;
 	};
+
+	bool findEndpoint(libusb_device *device) {
+		
+	}
 
 	bool read(unsigned char *data, int length) {
 
