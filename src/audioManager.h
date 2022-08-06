@@ -6,8 +6,11 @@
 #include <pulse/simple.h>
 
 
-#define BUFSIZE 1024
+#define BUFSIZE 2560
 
 
+bool init();
+bool write(const void *data, size_t bytes);
+void finish();
 
 #endif
