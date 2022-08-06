@@ -10,7 +10,9 @@
                 "-o",
                 "prog",
                 "./src/*.cpp",
-                "-lusb-1.0"
+                "-lusb-1.0",
+                "-lpulse-simple",
+                "-lpulse"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
