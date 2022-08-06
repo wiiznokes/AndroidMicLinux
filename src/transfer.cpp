@@ -6,6 +6,10 @@ namespace transfer
 	struct libusb_device_handle *handle;
 	unsigned char endpoint;
 
+	bool findEndpoint(libusb_device *device) {
+		return false;
+	}
+
 	bool init(libusb_device *device){
 		int ret;
 
@@ -21,10 +25,6 @@ namespace transfer
 		}
 
 		return true;
-	};
-
-	bool findEndpoint(libusb_device *device) {
-		
 	}
 
 	bool read(unsigned char *data, int length) {
