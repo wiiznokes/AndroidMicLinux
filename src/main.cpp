@@ -12,7 +12,7 @@ void initUsb(libusb_context *context) {
     return;
 }
 
-// g++ -o prog ./src/*cpp -lusb-1.0 && ./prog
+
 int main() {
 
 	libusb_context *context = NULL;
