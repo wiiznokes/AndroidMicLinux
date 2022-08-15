@@ -12,7 +12,7 @@
             "program": "${workspaceFolder}/prog",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${fileDirname}",
+            "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -28,7 +28,7 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "g++"
+            "preLaunchTask": "build"
         }
     ]
 }
