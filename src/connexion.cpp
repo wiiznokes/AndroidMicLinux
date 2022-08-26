@@ -24,18 +24,18 @@ libusb_device* findAndroidDevice(libusb_context *context){
 	cout << listSize << " devices found" << endl;
 
     libusb_device *device = NULL;
-	struct libusb_device_descriptor *device_descriptor;
+	struct libusb_device_descriptor device_descriptor;
 	int ret;
 	int i = 0;
 	bool found = false;
 	while (i < listSize && !found){
-		ret = libusb_get_device_descriptor(devices[i], device_descriptor);
+		ret = libusb_get_device_descriptor(devices[i], &device_descriptor);
 		if(ret < 0){
 			cout << "Error in getting device descriptor" << endl;
 			break;
 		}
 
-		if(device_descriptor->idVendor == VID_GOOGLE){
+		if(device_descriptor.idVendor == VID_GOOGLE){
 			cout <<"Android device found" << "\n" << endl;
 			found = true;
             device = devices[i];
