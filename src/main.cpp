@@ -26,7 +26,7 @@ int main() {
 
 	ret = isAndroidAcc(device);
 
-	//error
+	//error in isAndroidAcc
 	if(ret == -1) {
 		libusb_exit(context);
     	return 1;
@@ -44,12 +44,25 @@ int main() {
 		cout << "device already in accessory mode" << endl;
 	
 
-	
+	if(!transfer::init(device)) {
+		cout << "error in init transfer" << endl;
+		libusb_exit(context);
+		return 1;
+	}
+
+	unsigned char *buffer;
+
+	if(transfer::read(buffer, BUFFER_SIZE)) {
+		cout << sizeof(buffer) << endl;
+	}
+	else {
+		cout << "error while reading" << endl;
+		libusb_exit(context);
+	}
 
 
 
-
-
+	transfer::finish();
 	libusb_exit(context);
     return 0;
 }
