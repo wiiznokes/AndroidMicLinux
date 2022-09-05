@@ -4,14 +4,12 @@
 namespace transfer
 {
 	struct libusb_device_handle *handle;
-	unsigned char endpoints[10];
+	ConfTransfer confTransfer;
 
-	bool findEndpoint(libusb_device *device) {
+	bool findConfTransferList(libusb_device *device, ConfTransferList *confTransferList) {
 		int ret;
-		int endpointCount = 0;
-		endpoints[0] = 0;
-		struct libusb_device_descriptor device_descriptor;
 
+		struct libusb_device_descriptor device_descriptor;
 		ret = libusb_get_device_descriptor(device, &device_descriptor);
 
 		if(ret < 0) {
@@ -33,27 +31,31 @@ namespace transfer
 			for (int j = 0; j < config_descriptor->bNumInterfaces; j++) {
 				const struct libusb_interface *interface;
 				interface = &config_descriptor->interface[j];
+				//creation of the structure that stores the information useful for the transfer
+				ConfTransfer *confTransfer = new ConfTransfer;
+				
 
 				//nombre d'altsetting
 				for (int k = 0; k < interface->num_altsetting; k++) {
 					const struct libusb_interface_descriptor *interface_descriptor;
 					interface_descriptor = &interface->altsetting[k];
 
+					confTransfer->interface_number = interface_descriptor->bInterfaceNumber;
+
 					//nombre d'endpoint
 					for (int l = 0; l < interface_descriptor->bNumEndpoints; l++) {
 						const struct libusb_endpoint_descriptor *endpoint_descriptor;
 						endpoint_descriptor = &interface_descriptor->endpoint[l];
 
-						printf("bEndpointAddress: %02xh\n", endpoint_descriptor->bEndpointAddress);
-						endpoints[endpointCount] = endpoint_descriptor->bEndpointAddress;
-						endpointCount++;
+						confTransfer->endpoints.push_back(endpoint_descriptor->bEndpointAddress);
 					}
+					confTransferList->list.push_back(*confTransfer);
 				}
 			}
 			libusb_free_config_descriptor(config_descriptor);
 		}
-		printf("Endpoint count = %d, [0] = %02xh\n", endpointCount, endpoints[0]);
-		if(endpoints[0] != 0)
+
+		if(confTransferList->list.size() > 0)
 			return true;
 		else
 			return false;
@@ -68,12 +70,27 @@ namespace transfer
 			return false;
 		}
 
-		if(!findEndpoint(device)) {
+		ConfTransferList *confTransferList = new ConfTransferList;
+		if(!findConfTransferList(device, confTransferList)) {
 			std::cout << "Failed to find endpoint" << std::endl;
 			libusb_close(handle);
+			delete confTransferList;
 			return false;
 		}
 
+		//choice of confTransfer
+		confTransfer = confTransferList->list[0];
+		confTransfer.endpoint = confTransfer.endpoints[0];
+		delete confTransferList;
+		printf("Interface number: %d, endpoint: %02xh\n",confTransfer.interface_number, confTransfer.endpoint);
+
+		ret = libusb_claim_interface(handle, confTransfer.interface_number);
+		if(ret < 0){
+			std::cout << "error: libusb_claim_interface " << ret << std::endl;
+			return false;
+		}
+
+		delete confTransferList;
 		return true;
 	}
 
@@ -81,14 +98,14 @@ namespace transfer
 		int ret;
 
 		ret = libusb_bulk_transfer(handle,
-								endpoints[0],
+								confTransfer.endpoints[0],
 								data,
 								length,
 								NULL,
 								3000);
 
 		if (ret < 0) {
-			std::cout << "error: libusb_bulk_transfer(): " << ret << std::endl;
+			std::cout << "error: libusb_bulk_transfer: " << ret << std::endl;
 			libusb_close(handle);
 			return false;
 		}
@@ -96,6 +113,12 @@ namespace transfer
 	}
 
 	void finish() {
+		int ret;
+		ret = libusb_release_interface(handle, confTransfer.interface_number);
+		if (ret < 0) {
+			std::cout << "error: libusb_release_interface: " << ret << std::endl;
+		}
+
 		libusb_close(handle);
 	}
 }

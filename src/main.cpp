@@ -60,8 +60,9 @@ int main() {
 		libusb_exit(context);
 	}
 
-
-
+	
+	buffer;
+	
 	transfer::finish();
 	libusb_exit(context);
     return 0;
