@@ -4,10 +4,12 @@
 namespace transfer
 {
 	struct libusb_device_handle *handle;
-	unsigned char endpoint = 0;
+	unsigned char endpoints[10];
 
 	bool findEndpoint(libusb_device *device) {
 		int ret;
+		int endpointCount = 0;
+		endpoints[0] = 0;
 		struct libusb_device_descriptor device_descriptor;
 
 		ret = libusb_get_device_descriptor(device, &device_descriptor);
@@ -43,14 +45,15 @@ namespace transfer
 						endpoint_descriptor = &interface_descriptor->endpoint[l];
 
 						printf("bEndpointAddress: %02xh\n", endpoint_descriptor->bEndpointAddress);
-						endpoint = endpoint_descriptor->bEndpointAddress;
+						endpoints[endpointCount] = endpoint_descriptor->bEndpointAddress;
+						endpointCount++;
 					}
 				}
 			}
 			libusb_free_config_descriptor(config_descriptor);
 		}
-		
-		if(endpoint != 0)
+		printf("Endpoint count = %d, [0] = %02xh\n", endpointCount, endpoints[0]);
+		if(endpoints[0] != 0)
 			return true;
 		else
 			return false;
@@ -78,7 +81,7 @@ namespace transfer
 		int ret;
 
 		ret = libusb_bulk_transfer(handle,
-								endpoint,
+								endpoints[0],
 								data,
 								length,
 								NULL,

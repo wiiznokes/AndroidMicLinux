@@ -53,7 +53,7 @@ int main() {
 	unsigned char *buffer;
 
 	if(transfer::read(buffer, BUFFER_SIZE)) {
-		cout << sizeof(buffer) << endl;
+		cout << "size of buffer = " << sizeof(buffer) << endl;
 	}
 	else {
 		cout << "error while reading" << endl;
