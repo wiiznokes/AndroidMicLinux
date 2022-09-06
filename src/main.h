@@ -8,11 +8,7 @@
 #include <libusb-1.0/libusb.h>
 
 #include "audioManager.h"
-#include "connexion.h"
-#include "transfer.h"
-
-
-#define BUFFER_SIZE 2560
+#include "accessory.hpp"
 
 
 #endif
