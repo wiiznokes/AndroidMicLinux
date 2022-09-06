@@ -7,11 +7,9 @@ void Accessory::lib_init(){
   if(ret != 0){
     throw(AccessoryException(libusb_error_name(ret)));
   }
-  lib_load = true;
 }
 
 Accessory::Accessory() {
-    lib_load = false;
 }
 
 
@@ -50,6 +48,7 @@ void Accessory::find_pid_vid() {
 
 	struct libusb_device_descriptor device_descriptor;
 	int ret;
+    bool found = false;
 
 	for (int i = 0; i < listSize; i++){
 		ret = libusb_get_device_descriptor(devices[i], &device_descriptor);
@@ -59,6 +58,7 @@ void Accessory::find_pid_vid() {
 		}
 
 		if(device_descriptor.idVendor == VID_GOOGLE){
+            found = true;
 			cout <<"Android device found" << endl;
             
             dev_vid = device_descriptor.idVendor;
@@ -67,6 +67,9 @@ void Accessory::find_pid_vid() {
             break;
 		}
 	}
+
+    if(!found)
+        throw(AccessoryException("No android device detected"));
 
 }
 
@@ -168,6 +171,10 @@ void Accessory::change_device() {
 
 
 bool Accessory::isAccessory() {
+
+    if(handle == NULL) {
+        return false;
+    }
     libusb_device *device = NULL;
     device = libusb_get_device(handle);
 
@@ -195,30 +202,33 @@ bool Accessory::isAccessory() {
 		}
 }
 
-void Accessory::send_data(vector<uint8_t> data){
-  int ret = 0;
-  int sent = 0;
-  ret = libusb_bulk_transfer(handle, out_addr, data.data(), data.size(), &sent, 0);
-  if(ret < 0 || (unsigned int)ret != data.size()){
-    throw(AccessoryException(libusb_error_name(ret)));
-  }
+void Accessory::send_data(vector<uint8_t> data) {
+    int ret = 0;
+    int sent = 0;
+    ret = libusb_bulk_transfer(handle, out_addr, data.data(), data.size(), &sent, 0);
+    if(ret < 0 || (unsigned int)ret != data.size()) {
+        throw(AccessoryException(libusb_error_name(ret)));
+    }
 }
 
 void Accessory::read_data(vector<uint8_t>& data){
-  int ret = 0;
-  int size = 0;
-  uint8_t buff[BUFFER_SIZE];
-  data.clear();
-  ret = libusb_bulk_transfer(handle, in_addr, buff, BUFFER_SIZE, &size, 0);
-  cout << size << endl;
-  if(ret < 0){
-    throw(AccessoryException(libusb_error_name(ret)));
-  }
-  data.assign(buff, buff + size);
+    int ret = 0;
+    int size = 0;
+    uint8_t buff[BUFFER_SIZE];
+    data.clear();
+    ret = libusb_bulk_transfer(handle, in_addr, buff, BUFFER_SIZE, &size, 0);
+    cout << size << endl;
+    if(ret < 0) {
+        throw(AccessoryException(libusb_error_name(ret)));
+    }
+    data.assign(buff, buff + size);
 }
 
 Accessory::~Accessory(){
-  libusb_release_interface(handle, 0);
-  libusb_close(handle);
-  libusb_exit(NULL);
+
+    if(handle != NULL) {
+        libusb_release_interface(handle, 0);
+        libusb_close(handle);
+    }
+    libusb_exit(NULL);
 }

@@ -38,8 +38,7 @@ class Accessory{
         libusb_device_handle* handle = NULL;
         const static uint8_t in_addr = 0x85;
         const static uint8_t out_addr = 0x07;
-
-        static bool lib_load;
+        
 
         const char *manufacturer = "home";
         const char *model = "androidMic";
