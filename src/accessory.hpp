@@ -19,9 +19,9 @@
 #define	PID_AOA_ACC_ADB		    0x2D01
 
 //USB constant
-#define USB_DIR_IN              0x80
-#define USB_DIR_OUT             0x0
-#define USB_TYPE_VENDOR         0x40
+#define USB_DIR_IN              0x00000080
+#define USB_DIR_OUT             0x00000000
+#define USB_TYPE_VENDOR         0x00000040
 #define DELAY_CONTROL           2000
 #define BUFFER_SIZE 2560
 

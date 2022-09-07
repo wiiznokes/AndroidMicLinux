@@ -106,7 +106,7 @@ void Accessory::change_device() {
 
     ret = libusb_control_transfer(
         handle,
-        192,                    //request type
+        192,             //request type
         51,                     //request
         0,                      //value
         0,                      //index      
@@ -137,7 +137,7 @@ void Accessory::change_device() {
 	for(i = 0; i < 6; i++) {
         ret = libusb_control_transfer(
             handle,
-            USB_TYPE_VENDOR,
+            USB_DIR_OUT,
             52,
             0,
             (uint16_t)i,
@@ -158,7 +158,7 @@ void Accessory::change_device() {
 
     ret = libusb_control_transfer(
         handle,
-        USB_TYPE_VENDOR,
+        USB_DIR_OUT,
         53,
         0,
         0,
