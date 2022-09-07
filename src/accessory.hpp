@@ -35,6 +35,7 @@ class AccessoryException : public runtime_error {
 class Accessory{
 
     private:
+        libusb_context *context = NULL;
         libusb_device_handle* handle = NULL;
         const static uint8_t in_addr = 0x85;
         const static uint8_t out_addr = 0x07;
@@ -56,7 +57,7 @@ class Accessory{
 
     public:
         Accessory();
-        static void lib_init();
+        void lib_init();
 
         bool isAccessory();
         bool check_for_accessory();

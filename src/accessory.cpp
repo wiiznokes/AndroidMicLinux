@@ -3,7 +3,7 @@
 
 void Accessory::lib_init(){
   int ret;
-  ret = libusb_init(NULL);
+  ret = libusb_init(&context);
   if(ret != 0){
     throw(AccessoryException(libusb_error_name(ret)));
   }
@@ -38,7 +38,7 @@ void Accessory::find_pid_vid() {
 
     libusb_device **devices;
 	ssize_t listSize;
-    listSize = libusb_get_device_list(NULL, &devices);
+    listSize = libusb_get_device_list(context, &devices);
 
     if(listSize < 0){
 		libusb_free_device_list(devices, 1);
@@ -75,7 +75,7 @@ void Accessory::find_pid_vid() {
 
 void Accessory::load_device() {
 
-    handle = libusb_open_device_with_vid_pid(NULL, dev_vid, dev_pid);
+    handle = libusb_open_device_with_vid_pid(context, dev_vid, dev_pid);
 
     if (handle == NULL)
         throw(AccessoryException("No Device Found"));
@@ -230,5 +230,6 @@ Accessory::~Accessory(){
         libusb_release_interface(handle, 0);
         libusb_close(handle);
     }
-    libusb_exit(NULL);
+    if(context != NULL)
+        libusb_exit(context);
 }
