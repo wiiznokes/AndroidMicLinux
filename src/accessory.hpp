@@ -36,6 +36,7 @@ class Accessory{
 
     private:
         libusb_context *context = NULL;
+        libusb_device *device = NULL;
         libusb_device_handle *handle = NULL;
         bool isClaim = false;
         bool lib_load = false;

@@ -80,6 +80,7 @@ void Accessory::find_dev_vid_pid() {
             
             dev_vid = device_descriptor.idVendor;
             dev_pid = device_descriptor.idProduct;
+            device = devices[i];
             libusb_free_device_list(devices, 1);
             break;
 		}
@@ -93,8 +94,8 @@ void Accessory::find_dev_vid_pid() {
 void Accessory::load_device() {
     int ret;
 
-    handle = libusb_open_device_with_vid_pid(context, dev_vid, dev_pid);
-    if (handle != NULL)
+    ret = libusb_open(device, &handle);
+    if (ret < 0)
         throw(AccessoryException("Can't open device"));
 
     // ?
