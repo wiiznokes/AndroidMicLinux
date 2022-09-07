@@ -36,7 +36,7 @@ class Accessory{
 
     private:
         libusb_context *context = NULL;
-        libusb_device_handle* handle = NULL;
+        libusb_device_handle *handle = NULL;
         bool isClaim = false;
 
         const uint8_t in_addr = 0x85;

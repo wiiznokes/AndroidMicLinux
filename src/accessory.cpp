@@ -79,8 +79,15 @@ void Accessory::load_device() {
 
     if (handle == NULL)
         throw(AccessoryException("No Device Found"));
+
     
-    int ret = libusb_claim_interface(handle, 0);
+    int ret;
+
+    // ?
+    if(libusb_kernel_driver_active(handle, 0) != 0) {
+        libusb_detach_kernel_driver(handle, 0);
+    }
+    ret = libusb_claim_interface(handle, 0);
 
     if(ret != 0){
         throw(AccessoryException(libusb_error_name(ret)));
@@ -90,7 +97,7 @@ void Accessory::load_device() {
 }
 
 void Accessory::change_device() {
-    unsigned char ioBuffer[2];
+    uint8_t buffer[2];
 	int ret;
     int deviceProtocol;
 
@@ -99,19 +106,19 @@ void Accessory::change_device() {
 
     ret = libusb_control_transfer(
         handle,
-        192,    //?
-        51,
-        0,
-        0,
-        ioBuffer,
-        2,
+        192,                    //request type
+        51,                     //request
+        0,                      //value
+        0,                      //index      
+        buffer,                 //data
+        2,                      //lenght       
         DELAY_CONTROL);
 
     if(ret != 0)
 		throw(AccessoryException(libusb_error_name(ret)));
 
     //verif protocol
-    deviceProtocol = ioBuffer[1] << 8 | ioBuffer[0];
+    deviceProtocol = buffer[1] << 8 | buffer[0];
     if (deviceProtocol < AOA_PROTOCOL_MIN || deviceProtocol > AOA_PROTOCOL_MAX)
 		throw(AccessoryException("Unsupported AOA protocol"));
 
