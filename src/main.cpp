@@ -16,6 +16,10 @@ int main() {
 		exit(-1);
 	}
 
+	if(accessory->isConfigured()) {
+		cout << "isConfigured: success" << endl;
+	}
+
 
 
 

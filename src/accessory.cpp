@@ -20,6 +20,7 @@ Accessory::Accessory() {
 
 
 bool Accessory::check_for_accessory() {
+    cout << "check_for_accessory" << endl;
 
     if(!lib_load) {
         try {
@@ -37,10 +38,15 @@ bool Accessory::check_for_accessory() {
 
     try {
         find_dev_vid_pid();
+        cout << "find_dev_vid_pid: success" << endl;
         load_device();
+        cout << "load_device: success" << endl;
         change_device();
+        cout << "change_device: success" << endl;
         find_dev_vid_pid();
+        cout << "find_dev_vid_pid: success" << endl;
         load_device();
+        cout << "load_device: success" << endl;
 
     } catch(AccessoryException &e) {
         cerr << e.what() << endl;
@@ -52,6 +58,7 @@ bool Accessory::check_for_accessory() {
 }
 
 void Accessory::find_dev_vid_pid() {
+    cout << "find_dev_vid_pid" << endl;
 
     libusb_device **devices;
 	ssize_t listSize;
@@ -92,6 +99,7 @@ void Accessory::find_dev_vid_pid() {
 }
 
 void Accessory::load_device() {
+    cout << "load_device" << endl;
     int ret;
 
     ret = libusb_open(device, &handle);
@@ -112,6 +120,7 @@ void Accessory::load_device() {
 }
 
 void Accessory::change_device() {
+    cout << "change_device" << endl;
     uint8_t buffer[2];
 	int ret;
     int deviceProtocol;
@@ -186,14 +195,11 @@ void Accessory::change_device() {
 
     libusb_release_interface(handle, 0);
     isClaim = false;
-
-    // ?
-    libusb_close(handle);
-    handle = NULL;
 }
 
 
 bool Accessory::isConfigured() {
+    cout << "isConfigured" << endl;
 
     if(!lib_load) {
         cerr << "lib not loaded" << endl;
