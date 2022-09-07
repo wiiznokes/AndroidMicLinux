@@ -43,6 +43,7 @@ bool Accessory::check_for_accessory() {
         cout << "load_device: success" << endl;
         change_device();
         cout << "change_device: success" << endl;
+        usleep(2000 * 1000);
         find_dev_vid_pid();
         cout << "find_dev_vid_pid: success" << endl;
         load_device();
@@ -117,6 +118,8 @@ void Accessory::load_device() {
     }
     else
         isClaim = true;
+
+    usleep(20 * 1000);
 }
 
 void Accessory::change_device() {
@@ -145,6 +148,8 @@ void Accessory::change_device() {
     deviceProtocol = buffer[1] << 8 | buffer[0];
     if (deviceProtocol < AOA_PROTOCOL_MIN || deviceProtocol > AOA_PROTOCOL_MAX)
 		throw(AccessoryException("Unsupported AOA protocol"));
+
+    usleep(20 * 1000);
 
     //request 52 (determine appropriate Android App)
     cout << "request 52" << endl;
@@ -195,6 +200,8 @@ void Accessory::change_device() {
 
     libusb_release_interface(handle, 0);
     isClaim = false;
+
+    usleep(20 * 1000);
 }
 
 
@@ -260,6 +267,7 @@ void Accessory::read_data(vector<uint8_t>& data){
 }
 
 Accessory::~Accessory(){
+    
 
     if(handle != NULL) {
         if(isClaim)
@@ -269,3 +277,4 @@ Accessory::~Accessory(){
     if(context != NULL)
         libusb_exit(context);
 }
+

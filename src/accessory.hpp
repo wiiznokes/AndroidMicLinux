@@ -5,6 +5,9 @@
 #include <cstring>
 #include <vector>
 
+//delay
+#include <unistd.h>
+
 #include <libusb-1.0/libusb.h>
 
 

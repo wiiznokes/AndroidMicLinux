@@ -15,12 +15,7 @@ int main() {
 		delete accessory;
 		exit(-1);
 	}
-
-	if(accessory->isConfigured()) {
-		cout << "isConfigured: success" << endl;
-	}
-
-
+	cout << "accessory configured!" << endl;
 
 
 	
