@@ -37,8 +37,10 @@ class Accessory{
     private:
         libusb_context *context = NULL;
         libusb_device_handle* handle = NULL;
-        const static uint8_t in_addr = 0x85;
-        const static uint8_t out_addr = 0x07;
+        bool isClaim = false;
+
+        const uint8_t in_addr = 0x85;
+        const uint8_t out_addr = 0x07;
         
 
         const char *manufacturer = "home";
