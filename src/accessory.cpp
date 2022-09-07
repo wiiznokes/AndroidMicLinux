@@ -4,7 +4,7 @@
 void Accessory::lib_init(){
   int ret;
   ret = libusb_init(&context);
-  if(ret != 0){
+  if(ret < 0){
     throw(AccessoryException(libusb_error_name(ret)));
   }
 }
@@ -50,8 +50,10 @@ void Accessory::find_device() {
 	int ret;
     bool found = false;
 
+    libusb_device *tempDevice = NULL;
 	for (int i = 0; i < listSize; i++){
-		ret = libusb_get_device_descriptor(devices[i], &device_descriptor);
+        tempDevice = devices[i];
+		ret = libusb_get_device_descriptor(tempDevice, &device_descriptor);
 		if(ret < 0){
             libusb_free_device_list(devices, 1);
 			throw(AccessoryException(libusb_error_name(ret)));
@@ -63,7 +65,7 @@ void Accessory::find_device() {
             
             dev_vid = device_descriptor.idVendor;
             dev_pid = device_descriptor.idProduct;
-            device = devices[i];
+            device = tempDevice;
             libusb_free_device_list(devices, 1);
             break;
 		}
@@ -78,7 +80,7 @@ void Accessory::load_device() {
     int ret;
 
     ret = libusb_open(device, &handle);
-    if (ret =! 0)
+    if (ret < 0)
         throw(AccessoryException(libusb_error_name(ret)));
 
     // ?
@@ -87,7 +89,7 @@ void Accessory::load_device() {
     }
 
     ret = libusb_claim_interface(handle, 0);
-    if(ret != 0){
+    if(ret < 0){
         throw(AccessoryException(libusb_error_name(ret)));
     }
     else
@@ -112,7 +114,7 @@ void Accessory::change_device() {
         2,                      //lenght       
         DELAY_CONTROL);
 
-    if(ret != 0)
+    if(ret < 0)
 		throw(AccessoryException(libusb_error_name(ret)));
 
     //verif protocol
@@ -135,7 +137,7 @@ void Accessory::change_device() {
 	for(i = 0; i < 6; i++) {
         ret = libusb_control_transfer(
             handle,
-            USB_DIR_OUT,
+            USB_TYPE_VENDOR,
             52,
             0,
             (uint16_t)i,
@@ -144,7 +146,7 @@ void Accessory::change_device() {
             DELAY_CONTROL);
 
 
-		if(0 > ret) {
+		if(ret < 0) {
 			cerr << "send string " << i <<  " call failed" << endl;
 			throw(AccessoryException(libusb_error_name(ret)));
 		}
@@ -156,7 +158,7 @@ void Accessory::change_device() {
 
     ret = libusb_control_transfer(
         handle,
-        USB_DIR_OUT,
+        USB_TYPE_VENDOR,
         53,
         0,
         0,
