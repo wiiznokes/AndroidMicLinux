@@ -1,40 +1,57 @@
 #include "accessory.hpp"
 
 
-void Accessory::lib_init(){
+void Accessory::lib_init() {
   int ret;
   ret = libusb_init(&context);
   if(ret < 0){
     throw(AccessoryException(libusb_error_name(ret)));
   }
+  lib_load = true;
 }
 
 Accessory::Accessory() {
+    try {
+		lib_init();
+	} catch(AccessoryException &e){
+		cerr << e.what() << endl;
+	}
 }
 
 
 bool Accessory::check_for_accessory() {
 
-    if(isAccessory()) {
-        cerr << "Device already in accessory mode" << endl;
+    if(!lib_load) {
+        try {
+		    lib_init();
+	    } catch(AccessoryException &e) {
+		    cerr << e.what() << endl;
+            return false;
+	    }
+    }
+
+    if(isConfigured()) {
+        cerr << "Device already configured" << endl;
         return true;
     }
 
     try {
-        find_device();
+        find_dev_vid_pid();
         load_device();
         change_device();
+        find_dev_vid_pid();
+        load_device();
 
     } catch(AccessoryException &e) {
         cerr << e.what() << endl;
         return false;
     }
 
-    return isAccessory();
+    return isConfigured();
 
 }
 
-void Accessory::find_device() {
+void Accessory::find_dev_vid_pid() {
 
     libusb_device **devices;
 	ssize_t listSize;
@@ -50,10 +67,8 @@ void Accessory::find_device() {
 	int ret;
     bool found = false;
 
-    libusb_device *tempDevice = NULL;
 	for (int i = 0; i < listSize; i++){
-        tempDevice = devices[i];
-		ret = libusb_get_device_descriptor(tempDevice, &device_descriptor);
+		ret = libusb_get_device_descriptor(devices[i], &device_descriptor);
 		if(ret < 0){
             libusb_free_device_list(devices, 1);
 			throw(AccessoryException(libusb_error_name(ret)));
@@ -65,7 +80,6 @@ void Accessory::find_device() {
             
             dev_vid = device_descriptor.idVendor;
             dev_pid = device_descriptor.idProduct;
-            device = tempDevice;
             libusb_free_device_list(devices, 1);
             break;
 		}
@@ -79,9 +93,9 @@ void Accessory::find_device() {
 void Accessory::load_device() {
     int ret;
 
-    ret = libusb_open(device, &handle);
-    if (ret < 0)
-        throw(AccessoryException(libusb_error_name(ret)));
+    handle = libusb_open_device_with_vid_pid(context, dev_vid, dev_pid);
+    if (handle != NULL)
+        throw(AccessoryException("Can't open device"));
 
     // ?
     if(libusb_kernel_driver_active(handle, 0) != 0) {
@@ -168,13 +182,25 @@ void Accessory::change_device() {
 
 	if(ret < 0)
 		throw(AccessoryException(libusb_error_name(ret)));
-	
+
+    libusb_release_interface(handle, 0);
+    isClaim = false;
+
+    // ?
+    libusb_close(handle);
+    handle = NULL;
 }
 
 
-bool Accessory::isAccessory() {
+bool Accessory::isConfigured() {
+
+    if(!lib_load) {
+        cerr << "lib not loaded" << endl;
+        return false;
+    }
 
     if(handle == NULL) {
+        cerr << "no handle" << endl;
         return false;
     }
     libusb_device *device = NULL;
@@ -190,7 +216,7 @@ bool Accessory::isAccessory() {
 	ret = libusb_get_device_descriptor(device, &device_descriptor);
 
 	if (ret < 0) {
-		cerr << "error: libusb_get_device_descriptor " << libusb_error_name(ret) << endl;
+		cerr << "error: libusb_get_device_descriptor: " << libusb_error_name(ret) << endl;
 		return false;
 	}
 

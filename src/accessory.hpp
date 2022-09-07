@@ -36,9 +36,9 @@ class Accessory{
 
     private:
         libusb_context *context = NULL;
-        libusb_device *device = NULL;
         libusb_device_handle *handle = NULL;
         bool isClaim = false;
+        bool lib_load = false;
 
         const uint8_t in_addr = 0x85;
         const uint8_t out_addr = 0x07;
@@ -53,16 +53,16 @@ class Accessory{
         uint16_t dev_vid;
         uint16_t dev_pid;
 
-        void find_device();
+        void lib_init();
+        void find_dev_vid_pid();
         void load_device();
         void change_device();
         
 
     public:
         Accessory();
-        void lib_init();
 
-        bool isAccessory();
+        bool isConfigured();
         bool check_for_accessory();
 
         void send_data(vector<uint8_t> data);
