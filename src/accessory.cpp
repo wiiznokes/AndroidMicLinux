@@ -21,7 +21,7 @@ bool Accessory::check_for_accessory() {
     }
 
     try {
-        find_pid_vid();
+        find_device();
         load_device();
         change_device();
 
@@ -34,7 +34,7 @@ bool Accessory::check_for_accessory() {
 
 }
 
-void Accessory::find_pid_vid() {
+void Accessory::find_device() {
 
     libusb_device **devices;
 	ssize_t listSize;
@@ -63,6 +63,7 @@ void Accessory::find_pid_vid() {
             
             dev_vid = device_descriptor.idVendor;
             dev_pid = device_descriptor.idProduct;
+            device = devices[i];
             libusb_free_device_list(devices, 1);
             break;
 		}
@@ -74,21 +75,18 @@ void Accessory::find_pid_vid() {
 }
 
 void Accessory::load_device() {
-
-    handle = libusb_open_device_with_vid_pid(context, dev_vid, dev_pid);
-
-    if (handle == NULL)
-        throw(AccessoryException("No Device Found"));
-
-    
     int ret;
+
+    ret = libusb_open(device, &handle);
+    if (ret =! 0)
+        throw(AccessoryException(libusb_error_name(ret)));
 
     // ?
     if(libusb_kernel_driver_active(handle, 0) != 0) {
         libusb_detach_kernel_driver(handle, 0);
     }
-    ret = libusb_claim_interface(handle, 0);
 
+    ret = libusb_claim_interface(handle, 0);
     if(ret != 0){
         throw(AccessoryException(libusb_error_name(ret)));
     }

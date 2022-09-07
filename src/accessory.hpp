@@ -36,6 +36,7 @@ class Accessory{
 
     private:
         libusb_context *context = NULL;
+        libusb_device *device = NULL;
         libusb_device_handle *handle = NULL;
         bool isClaim = false;
 
@@ -52,7 +53,7 @@ class Accessory{
         uint16_t dev_vid;
         uint16_t dev_pid;
 
-        void find_pid_vid();
+        void find_device();
         void load_device();
         void change_device();
         
