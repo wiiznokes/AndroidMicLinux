@@ -44,7 +44,7 @@ class Accessory{
         bool isClaim = false;
         bool lib_load = false;
 
-        const uint8_t in_addr = 0x85;
+        const uint8_t in_addr = 1;
         const uint8_t out_addr = 0x07;
         
 
@@ -71,6 +71,8 @@ class Accessory{
 
         void send_data(vector<uint8_t> data);
         void read_data(vector<uint8_t>& data);
+
+        void findEndpoint();
 
         ~Accessory();
 };

@@ -16,7 +16,7 @@ int main() {
 		exit(-1);
 	}
 	cout << "accessory configured!" << endl;
-	
+	accessory->findEndpoint();
 
 	while(1) {
 		try {

@@ -268,10 +268,10 @@ void Accessory::read_data(vector<uint8_t>& data){
     uint8_t buff[BUFFER_SIZE];
     data.clear();
     ret = libusb_bulk_transfer(handle, in_addr, buff, BUFFER_SIZE, &size, 0);
-    cout << size << endl;
     if(ret < 0) {
         throw(AccessoryException(libusb_error_name(ret)));
     }
+    cout << size << endl;
     data.assign(buff, buff + size);
 }
 
@@ -287,3 +287,48 @@ Accessory::~Accessory(){
         libusb_exit(context);
 }
 
+
+void Accessory::findEndpoint() {
+    int ret;
+    struct libusb_device_descriptor device_descriptor;
+
+    ret = libusb_get_device_descriptor(device, &device_descriptor);
+
+    if(ret < 0) {
+        std::cout << "error: libusb_get_device_descriptor " << ret << std::endl;
+        return;
+    }
+
+    //nombre de configurations
+    for (int i = 0; i < device_descriptor.bNumConfigurations; i++) {
+        struct libusb_config_descriptor *config_descriptor;
+        ret = libusb_get_config_descriptor(device, i, &config_descriptor);
+        if(ret < 0) {
+            std::cout << "error: libusb_get_config_descriptor " << ret << std::endl;
+            libusb_free_config_descriptor(config_descriptor);
+            return;
+        }
+
+        //nombre d'interfaces
+        for (int j = 0; j < config_descriptor->bNumInterfaces; j++) {
+            const struct libusb_interface *interface;
+            interface = &config_descriptor->interface[j];
+
+            //nombre d'altsetting
+            for (int k = 0; k < interface->num_altsetting; k++) {
+                const struct libusb_interface_descriptor *interface_descriptor;
+                interface_descriptor = &interface->altsetting[k];
+
+                //nombre d'endpoint
+                for (int l = 0; l < interface_descriptor->bNumEndpoints; l++) {
+                    const struct libusb_endpoint_descriptor *endpoint_descriptor;
+                    endpoint_descriptor = &interface_descriptor->endpoint[l];
+
+                    printf("bEndpointAddress: %02xh\n", endpoint_descriptor->bEndpointAddress);
+                    printf("bEndpointAddress (int): %d\n", endpoint_descriptor->bEndpointAddress);
+                }
+            }
+        }
+        libusb_free_config_descriptor(config_descriptor);
+    }
+}
