@@ -44,6 +44,8 @@ bool Accessory::check_for_accessory() {
         change_device();
         cout << "change_device: success" << endl;
         usleep(2000 * 1000);
+        libusb_exit(context);
+        lib_init();
         find_dev_vid_pid();
         cout << "find_dev_vid_pid: success" << endl;
         load_device();
@@ -104,8 +106,14 @@ void Accessory::load_device() {
     int ret;
 
     ret = libusb_open(device, &handle);
-    if (ret < 0)
-        throw(AccessoryException("Can't open device"));
+    if (ret < 0) {
+        cout << "Can't open device with libusb_open: " << libusb_error_name(ret) << endl;
+        handle = libusb_open_device_with_vid_pid(context, dev_vid, dev_pid);
+        if(handle == NULL) {
+            cout << "Can't open device with vid/pid: " << libusb_error_name(ret) << endl;
+            throw(AccessoryException("Can't open device"));
+        }
+    }
 
     // ?
     if(libusb_kernel_driver_active(handle, 0) != 0) {
