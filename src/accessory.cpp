@@ -41,6 +41,8 @@ bool Accessory::check_for_accessory() {
         cout << "find_dev_vid_pid: success" << endl;
         load_device();
         cout << "load_device: success" << endl;
+        if(isConfigured())
+            return true;
         change_device();
         cout << "change_device: success" << endl;
         usleep(2000 * 1000);
@@ -214,7 +216,6 @@ void Accessory::change_device() {
 
 
 bool Accessory::isConfigured() {
-    cout << "isConfigured" << endl;
 
     if(!lib_load) {
         cerr << "lib not loaded" << endl;
