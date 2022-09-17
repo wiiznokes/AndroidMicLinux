@@ -1,8 +1,18 @@
 #include "main.h"
-
+#include <thread> 
 
 
 using namespace std;
+
+static void loopCancelation(bool* loop){
+	char c = 'a';
+	while(c != 'q') {
+		cout << "Je suis dans loopCancelation" << endl;
+		scanf("%c", &c);
+		cout << "scanf = " << c << endl;
+	}
+	*loop = false;
+}
 
 int main() {
 
@@ -18,7 +28,9 @@ int main() {
 	cout << "accessory configured!" << endl;
 	accessory->findEndpoint();
 
-	while(1) {
+	static bool loop = true;
+	thread cancelationThread(loopCancelation, &loop);
+	while(loop == true) {
 		try {
 			accessory->read_data(sharedBuffer);
 			cout << sharedBuffer.data() << endl;
@@ -27,8 +39,7 @@ int main() {
 			usleep(2000 * 1000);
 		}
   	}
-	
-
+	cout << "J'ai quitté la boucle" << endl;
 
 
   	delete accessory;

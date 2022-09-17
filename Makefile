@@ -13,7 +13,7 @@ EXEC		= AndroidMicLinux
 all: $(EXEC)
 
 $(BUILD_DIR)/%.o : $(SRC_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) -o $@ -c $<
+	$(CC) $(CXXFLAGS) -o $@ -c $<
 
 $(EXEC) : $(OBJS)
 	$(CXX) -o $(EXEC) $(OBJS) $(LIBS)
