@@ -1,22 +1,22 @@
-CC	 	= g++
-FLAGS	= -g -Wall
+CXX	 		= g++
+CXXFLAGS	= -g -Wall
 
 SRC_DIR     = ./src
 BUILD_DIR   = ./build
 		
-SRC		= $(wildcard $(SRC_DIR)/*.cpp)
-OBJS	= $(BUILD_DIR)/$(notdir $(SRC:.cpp=.o))
-LIBS 	= -lusb-1.0 -lpulse-simple -lpulse
-EXEC	= AndroidMicLinux
+SRC			= $(wildcard $(SRC_DIR)/*.cpp)
+OBJS    	= $(SRC:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
+LIBS 		= -lusb-1.0 -lpulse-simple -lpulse
+EXEC		= AndroidMicLinux
 
 
 all: $(EXEC)
 
-%.o : %.c
-	$(CC) -o $(OBJS) -c $(SRC)
+$(BUILD_DIR)/%.o : $(SRC_DIR)/%.cpp
+	$(CC) $(CXXFLAGS) -o $@ -c $<
 
-$(EXEC) : $(OBJ)
-	$(CC) -o $(EXEC) $(OBJ) $(LIBS) $(FLAGS)
+$(EXEC) : $(OBJS)
+	$(CC) -o $(EXEC) $(OBJS) $(LIBS)
 
 clean:
 	rm -f $(OBJS) $(EXEC)
