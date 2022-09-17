@@ -41,9 +41,13 @@ bool Accessory::check_for_accessory() {
         cout << "find_dev_vid_pid: success" << endl;
         load_device();
         cout << "load_device: success" << endl;
+        if(isConfigured())
+            return true;
         change_device();
         cout << "change_device: success" << endl;
         usleep(2000 * 1000);
+        libusb_exit(context);
+        lib_init();
         find_dev_vid_pid();
         cout << "find_dev_vid_pid: success" << endl;
         load_device();
@@ -104,8 +108,14 @@ void Accessory::load_device() {
     int ret;
 
     ret = libusb_open(device, &handle);
-    if (ret < 0)
-        throw(AccessoryException("Can't open device"));
+    if (ret < 0) {
+        cout << "Can't open device with libusb_open: " << libusb_error_name(ret) << endl;
+        handle = libusb_open_device_with_vid_pid(context, dev_vid, dev_pid);
+        if(handle == NULL) {
+            cout << "Can't open device with vid/pid: " << libusb_error_name(ret) << endl;
+            throw(AccessoryException("Can't open device"));
+        }
+    }
 
     // ?
     if(libusb_kernel_driver_active(handle, 0) != 0) {
@@ -206,7 +216,6 @@ void Accessory::change_device() {
 
 
 bool Accessory::isConfigured() {
-    cout << "isConfigured" << endl;
 
     if(!lib_load) {
         cerr << "lib not loaded" << endl;
@@ -259,10 +268,10 @@ void Accessory::read_data(vector<uint8_t>& data){
     uint8_t buff[BUFFER_SIZE];
     data.clear();
     ret = libusb_bulk_transfer(handle, in_addr, buff, BUFFER_SIZE, &size, 0);
-    cout << size << endl;
     if(ret < 0) {
         throw(AccessoryException(libusb_error_name(ret)));
     }
+    cout << size << endl;
     data.assign(buff, buff + size);
 }
 
@@ -278,3 +287,48 @@ Accessory::~Accessory(){
         libusb_exit(context);
 }
 
+
+void Accessory::findEndpoint() {
+    int ret;
+    struct libusb_device_descriptor device_descriptor;
+
+    ret = libusb_get_device_descriptor(device, &device_descriptor);
+
+    if(ret < 0) {
+        std::cout << "error: libusb_get_device_descriptor " << ret << std::endl;
+        return;
+    }
+
+    //nombre de configurations
+    for (int i = 0; i < device_descriptor.bNumConfigurations; i++) {
+        struct libusb_config_descriptor *config_descriptor;
+        ret = libusb_get_config_descriptor(device, i, &config_descriptor);
+        if(ret < 0) {
+            std::cout << "error: libusb_get_config_descriptor " << ret << std::endl;
+            libusb_free_config_descriptor(config_descriptor);
+            return;
+        }
+
+        //nombre d'interfaces
+        for (int j = 0; j < config_descriptor->bNumInterfaces; j++) {
+            const struct libusb_interface *interface;
+            interface = &config_descriptor->interface[j];
+
+            //nombre d'altsetting
+            for (int k = 0; k < interface->num_altsetting; k++) {
+                const struct libusb_interface_descriptor *interface_descriptor;
+                interface_descriptor = &interface->altsetting[k];
+
+                //nombre d'endpoint
+                for (int l = 0; l < interface_descriptor->bNumEndpoints; l++) {
+                    const struct libusb_endpoint_descriptor *endpoint_descriptor;
+                    endpoint_descriptor = &interface_descriptor->endpoint[l];
+
+                    printf("bEndpointAddress: %02xh\n", endpoint_descriptor->bEndpointAddress);
+                    printf("bEndpointAddress (int): %d\n", endpoint_descriptor->bEndpointAddress);
+                }
+            }
+        }
+        libusb_free_config_descriptor(config_descriptor);
+    }
+}
