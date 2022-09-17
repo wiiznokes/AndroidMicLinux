@@ -1,13 +1,14 @@
 CC	 	= g++
 FLAGS	= -g -Wall
 
-SRC		= $(wildcard *.c)
-HEADER	= $(SRC:.c=.h)
-OBJS	= $(SRC:.c=.o)
+SRC_DIR     = ./src
+BUILD_DIR   = ./build
+		
+SRC		= $(wildcard $(SRC_DIR)/*.cpp)
+OBJS	= $(BUILD_DIR)/$(notdir $(SRC:.cpp=.o))
 LIBS 	= -lusb-1.0 -lpulse-simple -lpulse
 EXEC	= AndroidMicLinux
 
-OBJS_SUB_DIR = build
 
 all: $(EXEC)
 
