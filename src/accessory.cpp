@@ -267,7 +267,7 @@ void Accessory::read_data(vector<uint8_t>& data){
     int size = 0;
     uint8_t buff[BUFFER_SIZE];
     data.clear();
-    ret = libusb_bulk_transfer(handle, in_addr, buff, BUFFER_SIZE, &size, 0);
+    ret = libusb_bulk_transfer(handle, in_addr, buff, BUFFER_SIZE, &size, 1000);
     if(ret < 0) {
         throw(AccessoryException(libusb_error_name(ret)));
     }

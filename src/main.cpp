@@ -7,9 +7,7 @@ using namespace std;
 static void loopCancelation(bool* loop){
 	char c = 'a';
 	while(c != 'q') {
-		cout << "Je suis dans loopCancelation" << endl;
 		scanf("%c", &c);
-		cout << "scanf = " << c << endl;
 	}
 	*loop = false;
 }
@@ -29,7 +27,9 @@ int main() {
 	accessory->findEndpoint();
 
 	static bool loop = true;
+	cout << "start recording audio from Android, press q to stop" << endl;
 	thread cancelationThread(loopCancelation, &loop);
+	
 	while(loop == true) {
 		try {
 			accessory->read_data(sharedBuffer);
@@ -39,7 +39,8 @@ int main() {
 			usleep(2000 * 1000);
 		}
   	}
-	cout << "J'ai quitté la boucle" << endl;
+	cancelationThread.join();
+
 
 
   	delete accessory;
