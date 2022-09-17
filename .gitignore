@@ -1,4 +1,4 @@
 AndroidMicLinux
 *.log
 settings.json
-build/*
+build/*.o
