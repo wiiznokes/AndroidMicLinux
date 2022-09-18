@@ -1,5 +1,5 @@
 CXX	 		= g++
-CXXFLAGS	= -g -Wall
+CXXFLAGS	= -g -Wall -I/usr/include/pipewire-0.3 -I/usr/include/spa-0.2
 
 SRC_DIR     = ./src
 BUILD_DIR   = ./build
