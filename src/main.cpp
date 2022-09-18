@@ -24,12 +24,11 @@ int main() {
 		exit(-1);
 	}
 	cout << "accessory configured!" << endl;
-	accessory->findEndpoint();
 
 	static bool loop = true;
 	cout << "start recording audio from Android, press q to stop" << endl;
 	thread cancelationThread(loopCancelation, &loop);
-	
+
 	while(loop == true) {
 		try {
 			accessory->read_data(sharedBuffer);
