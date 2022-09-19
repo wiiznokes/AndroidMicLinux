@@ -6,7 +6,7 @@ BUILD_DIR   = ./build
 		
 SRC			= $(wildcard $(SRC_DIR)/*.cpp)
 OBJS    	= $(SRC:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
-LIBS 		= -lusb-1.0 -lpulse-simple -lpulse
+LIBS 		= -lusb-1.0 -lpipewire-0.3
 EXEC		= AndroidMicLinux
 
 
