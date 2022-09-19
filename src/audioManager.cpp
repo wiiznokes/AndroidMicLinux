@@ -1,4 +1,4 @@
-#include "audioManager.h"
+#include "audioManager.hpp"
 
 static void fill_f32(struct data *d, void *dest, int n_frames)
 {
