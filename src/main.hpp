@@ -6,7 +6,7 @@
 
 #include <libusb-1.0/libusb.h>
 
-#include "audioManager.h"
+#include "audioManager.hpp"
 #include "accessory.hpp"
 
 
